@@ -1,3 +1,4 @@
+using Banking.Api.Persistence;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,9 +35,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-public class AppDbContext : DbContext
-{
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options) { }
-}
