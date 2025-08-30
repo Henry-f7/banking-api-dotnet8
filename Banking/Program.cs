@@ -10,7 +10,7 @@ var env = builder.Environment;
 var dbPath = Path.GetFullPath(Path.Combine(env.ContentRootPath, cfg["Database:Path"]!));
 Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
 
-builder.Services.AddDbContext<DbContext>(opt =>
+builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddControllers();
