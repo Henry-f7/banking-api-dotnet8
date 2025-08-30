@@ -18,4 +18,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Customers\" />
+    <Folder Include="Features\Accounts\" />
+    <Folder Include="Features\Transactions\" />
+    <Folder Include="Persistence\" />
+  </ItemGroup>
+
 </Project>
