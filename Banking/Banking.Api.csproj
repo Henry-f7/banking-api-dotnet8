@@ -21,6 +21,7 @@
   <ItemGroup>
     <Folder Include="Features\Customers\" />
     <Folder Include="Features\Accounts\" />
+    <Folder Include="_data\" />
   </ItemGroup>
 
 </Project>

@@ -3,10 +3,15 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var cfg = builder.Configuration;
+var env = builder.Environment;
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlite(builder.Configuration.GetConnectionString("default")));
+var dbPath = Path.GetFullPath(Path.Combine(env.ContentRootPath, cfg["Database:Path"]!));
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+
+builder.Services.AddDbContext<DbContext>(opt =>
+    opt.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
