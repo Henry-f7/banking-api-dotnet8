@@ -18,8 +18,14 @@ namespace Banking.Api.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     FullName = table.Column<string>(type: "TEXT", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Gender = table.Column<string>(type: "TEXT", nullable: false),
                     NationalId = table.Column<string>(type: "TEXT", nullable: false),
-                    MonthlyIncome = table.Column<decimal>(type: "TEXT", nullable: true)
+                    MonthlyIncomeAmount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    MonthlyIncomeCurrency = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    DeletedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -27,20 +33,25 @@ namespace Banking.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "bankAccounts",
+                name: "BankAccounts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "TEXT", nullable: false),
                     AccountNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    Balance = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    Version = table.Column<int>(type: "INTEGER", nullable: false)
+                    CustomerId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Balance = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Currency = table.Column<string>(type: "TEXT", nullable: false),
+                    Version = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    DeletedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_bankAccounts", x => x.Id);
+                    table.PrimaryKey("PK_BankAccounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_bankAccounts_Customers_CustomerId",
+                        name: "FK_BankAccounts_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
@@ -54,37 +65,46 @@ namespace Banking.Api.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     AccountId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    Amount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    BalanceAfter = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IdempotencyKey = table.Column<string>(type: "TEXT", nullable: true)
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    BalanceAfter = table.Column<decimal>(type: "TEXT", nullable: false),
+                    IdempotencyKey = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    DeletedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BankTransactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BankTransactions_bankAccounts_AccountId",
+                        name: "FK_BankTransactions_BankAccounts_AccountId",
                         column: x => x.AccountId,
-                        principalTable: "bankAccounts",
+                        principalTable: "BankAccounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_bankAccounts_AccountNumber",
-                table: "bankAccounts",
+                name: "IX_BankAccounts_AccountNumber",
+                table: "BankAccounts",
                 column: "AccountNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_bankAccounts_CustomerId",
-                table: "bankAccounts",
+                name: "IX_BankAccounts_CustomerId",
+                table: "BankAccounts",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BankTransactions_AccountId_CreatedAt",
+                name: "IX_BankTransactions_AccountId_IdempotencyKey",
                 table: "BankTransactions",
-                columns: new[] { "AccountId", "CreatedAt" });
+                columns: new[] { "AccountId", "IdempotencyKey" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_NationalId",
+                table: "Customers",
+                column: "NationalId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -94,7 +114,7 @@ namespace Banking.Api.Migrations
                 name: "BankTransactions");
 
             migrationBuilder.DropTable(
-                name: "bankAccounts");
+                name: "BankAccounts");
 
             migrationBuilder.DropTable(
                 name: "Customers");
