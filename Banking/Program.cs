@@ -1,3 +1,4 @@
+using Banking.Api.Features.Accounts.Create;
 using Banking.Api.Features.Customers.Create;
 using Banking.Api.Persistence;
 using FluentValidation;
@@ -39,5 +40,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapCreateCustomer();
+
+app.MapCreateBankAccount();
 
 app.Run();
