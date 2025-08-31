@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Banking.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250830175950_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250830213204_CustomerIncomeAndSex_NI")]
+    partial class CustomerIncomeAndSex_NI
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,16 +95,32 @@ namespace Banking.Api.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("MonthlyIncome")
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MonthlyIncomeAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MonthlyIncomeCurrency")
+                        .IsRequired()
+                        .HasMaxLength(3)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NationalId")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NationalId")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
