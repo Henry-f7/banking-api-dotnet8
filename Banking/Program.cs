@@ -2,6 +2,7 @@ using Banking.Api.Features.Accounts.Create;
 using Banking.Api.Features.Accounts.GetBalance;
 using Banking.Api.Features.Customers.Create;
 using Banking.Api.Features.Transactions.Deposit;
+using Banking.Api.Features.Transactions.Withdraw;
 using Banking.Api.Persistence;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -46,5 +47,6 @@ app.MapCreateCustomer();
 app.MapCreateBankAccount();
 app.MapGetAccountBalance();
 app.MapDeposit();
+app.MapWithdraw();
 
 app.Run();
