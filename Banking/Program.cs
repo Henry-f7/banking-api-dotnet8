@@ -2,6 +2,8 @@ using Banking.Api.Application.Services;
 using Banking.Api.Features.Accounts.Create;
 using Banking.Api.Features.Accounts.GetBalance;
 using Banking.Api.Features.Customers.Create;
+using Banking.Api.Features.Customers.GetById;
+using Banking.Api.Features.Customers.List;
 using Banking.Api.Features.Transactions.Deposit;
 using Banking.Api.Features.Transactions.History;
 using Banking.Api.Features.Transactions.Withdraw;
@@ -22,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddScoped<IInterestService, InterestService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IAccountNumberGenerator, AccountNumberGenerator>();
 
 
 builder.Services.AddControllers();
@@ -56,6 +59,8 @@ app.UseAuthorization();
 
 // Enpoints mapping
 app.MapCreateCustomer();
+app.MapGetCustomers();
+app.MapGetCustomerById();
 app.MapCreateBankAccount();
 app.MapGetAccountBalance();
 app.MapDeposit();
