@@ -12,7 +12,7 @@ namespace Banking.Api.Persistence
         }
 
         public DbSet<Customer> Customers => Set<Customer>();
-        public DbSet<BankAccount> bankAccounts => Set<BankAccount>();
+        public DbSet<BankAccount> BankAccounts => Set<BankAccount>();
         public DbSet<BankTransaction> BankTransactions => Set<BankTransaction>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
