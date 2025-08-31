@@ -21,7 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddScoped<IInterestService, InterestService>();
-
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 
 builder.Services.AddControllers();
