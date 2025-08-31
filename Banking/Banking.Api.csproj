@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Customers\" />
     <Folder Include="Features\Accounts\" />
   </ItemGroup>
 

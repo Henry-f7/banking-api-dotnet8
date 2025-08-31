@@ -1,3 +1,4 @@
+using Banking.Api.Features.Customers.Create;
 using Banking.Api.Persistence;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapCreateCustomer();
 
 app.Run();

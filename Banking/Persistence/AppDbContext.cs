@@ -1,5 +1,7 @@
 ﻿using Banking.Api.Domain;
+using Banking.Api.Domain.Common;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Banking.Api.Persistence
 {
@@ -15,30 +17,72 @@ namespace Banking.Api.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // customer
-            modelBuilder.Entity<Customer>(entity =>
-            {
-                entity.Property(x => x.FullName).IsRequired();
-                entity.HasMany(x => x.Accounts).WithOne(x => x.Customer)
-                      .HasForeignKey(x => x.CustomerId);
-            });
+            modelBuilder.Entity<Customer>()
+                .HasIndex(c => c.NationalId)
+                .IsUnique();
 
-            // bank account
-            modelBuilder.Entity<BankAccount>(e =>
-            {
-                e.Property(x => x.AccountNumber).IsRequired();
-                e.HasIndex(x => x.AccountNumber).IsUnique();
-                e.Property(x => x.Balance).HasPrecision(18, 2); // contract
-                e.Property(x => x.Version).IsConcurrencyToken(); // token 
-            });
+            modelBuilder.Entity<BankAccount>()
+                .HasIndex(a => a.AccountNumber)
+                .IsUnique();
 
-            // bank transaction
-            modelBuilder.Entity<BankTransaction>(e =>
+            modelBuilder.Entity<BankTransaction>()
+                .HasIndex(t => new { t.AccountId, t.IdempotencyKey });
+
+            modelBuilder.Entity<BankAccount>()
+                .Property(a => a.Version)
+                .IsConcurrencyToken();
+
+            // Filtro global soft-delete
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                e.Property(x => x.Amount).HasPrecision(18, 2);
-                e.Property(x => x.BalanceAfter).HasPrecision(18, 2);
-                e.HasIndex(x => new { x.AccountId, x.CreatedAt });
-            });
+                if (typeof(AuditableEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    var param = Expression.Parameter(entityType.ClrType, "e");
+                    var prop = Expression.Property(param, nameof(AuditableEntity.DeletedAtUtc));
+                    var body = Expression.Equal(prop, Expression.Constant(null));
+                    var lambda = Expression.Lambda(body, param);
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+                }
+            }
+        }
+
+        public override int SaveChanges()
+        {
+            ApplyAuditableRules();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditableRules();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyAuditableRules()
+        {
+            var utcNow = DateTime.UtcNow;
+
+            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        // ensure CreatedAtUtc is set on new entities
+                        entry.Entity.CreatedAtUtc = utcNow;
+                        break;
+
+                    case EntityState.Modified:
+                        // update updated timestamp
+                        entry.Entity.UpdatedAtUtc = utcNow;
+                        break;
+
+                    case EntityState.Deleted:
+                        // soft-delete: set DeletedAtUtc and mark as modified
+                        entry.State = EntityState.Modified;
+                        entry.Entity.DeletedAtUtc = utcNow;
+                        break;
+                }
+            }
         }
     }
 }
