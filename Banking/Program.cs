@@ -1,3 +1,4 @@
+using Banking.Api.Application.Services;
 using Banking.Api.Features.Accounts.Create;
 using Banking.Api.Features.Accounts.GetBalance;
 using Banking.Api.Features.Customers.Create;
@@ -18,6 +19,8 @@ Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite($"Data Source={dbPath}"));
+
+builder.Services.AddScoped<IInterestService, InterestService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

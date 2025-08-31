@@ -4,3 +4,46 @@ GET {{Banking_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+### Create Customer
+POST http://localhost:5000/customers
+Content-Type: application/json
+
+{
+  "fullName": "Henry Fajardo",
+  "birthDate": "1996-12-07",
+  "gender": "M",
+  "nationalId": "001-071296-0003S",
+  "monthlyIncomeAmount": 1500,
+  "monthlyIncomeCurrency": "USD"
+}
+
+### Create Account
+POST http://localhost:5000/accounts
+Content-Type: application/json
+
+{
+  "customerId": "{{CUSTOMER_ID}}",
+  "accountNumber": "000123456789",
+  "initialBalance": 1000,
+  "currency": "USD"
+}
+
+### Balance
+GET http://localhost:5000/accounts/000123456789/balance
+
+### Deposit
+POST http://localhost:5000/accounts/000123456789/deposit
+Content-Type: application/json
+
+{ "amount": 250, "idempotencyKey": "dep-001" }
+
+### Withdraw
+POST http://localhost:5000/accounts/000123456789/withdraw
+Content-Type: application/json
+
+{ "amount": 300, "idempotencyKey": "wd-001" }
+
+### History
+GET http://localhost:5000/accounts/000123456789/transactions?page=1&size=20
+
