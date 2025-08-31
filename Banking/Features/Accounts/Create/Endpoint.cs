@@ -1,4 +1,5 @@
-﻿using Banking.Api.Domain;
+﻿using Banking.Api.Application.Services;
+using Banking.Api.Domain;
 using Banking.Api.Features.Transactions;
 using Banking.Api.Infrastructure.Validation;
 using Banking.Api.Persistence;
@@ -10,17 +11,19 @@ namespace Banking.Api.Features.Accounts.Create
     {
         public static IEndpointRouteBuilder MapCreateBankAccount(this IEndpointRouteBuilder app)
         {
-            app.MapPost("/accounts", async (CreateAccountRequest req, AppDbContext db) =>
+            app.MapPost("/accounts", async (
+               CreateAccountRequest req,
+               AppDbContext db,
+               IAccountNumberGenerator numberGen) =>
             {
                 var customer = await db.Customers.FirstOrDefaultAsync(c => c.Id == req.CustomerId);
                 if (customer is null) return Results.NotFound(new { message = "Customer not found" });
 
-                var dup = await db.BankAccounts.AnyAsync(a => a.AccountNumber == req.AccountNumber);
-                if (dup) return Results.Conflict(new { message = "AccountNumber already exists" });
+                var accNumber = await numberGen.GenerateUniqueAsync(db);
 
                 var acc = new BankAccount
                 {
-                    AccountNumber = req.AccountNumber,
+                    AccountNumber = accNumber,
                     CustomerId = req.CustomerId,
                     Balance = req.InitialBalance,
                     Currency = req.Currency
@@ -40,14 +43,19 @@ namespace Banking.Api.Features.Accounts.Create
                 }
 
                 await db.SaveChangesAsync();
-                return Results.Created($"/accounts/{acc.AccountNumber}", new { acc.Id, acc.AccountNumber, acc.Currency, acc.Balance });
+                return Results.Created($"/accounts/{acc.AccountNumber}", new
+                {
+                    acc.Id,
+                    acc.AccountNumber,
+                    acc.Currency,
+                    acc.Balance
+                });
             })
-            .WithTags("Accounts")
-            .WithName("CreateAccount")
-            .Produces(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status409Conflict)
-            .AddEndpointFilter<ValidationFilter<CreateAccountRequest>>();
+           .WithTags("Accounts")
+           .WithName("CreateAccount")
+           .Produces(StatusCodes.Status201Created)
+           .Produces(StatusCodes.Status404NotFound)
+           .AddEndpointFilter<ValidationFilter<CreateAccountRequest>>();
 
             return app;
         }
