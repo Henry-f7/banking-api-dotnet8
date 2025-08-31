@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Banking.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250830200105_InitialCreate")]
+    [Migration("20250831035652_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,10 +31,25 @@ namespace Banking.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Balance")
-                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Version")
@@ -48,7 +63,7 @@ namespace Banking.Api.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("bankAccounts");
+                    b.ToTable("BankAccounts");
                 });
 
             modelBuilder.Entity("Banking.Api.Domain.BankTransaction", b =>
@@ -61,14 +76,15 @@ namespace Banking.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("BalanceAfter")
-                        .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IdempotencyKey")
@@ -77,9 +93,15 @@ namespace Banking.Api.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId", "CreatedAt");
+                    b.HasIndex("AccountId", "IdempotencyKey");
 
                     b.ToTable("BankTransactions");
                 });
@@ -93,18 +115,41 @@ namespace Banking.Api.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("MonthlyIncome")
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MonthlyIncomeAmount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MonthlyIncomeCurrency")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NationalId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("NationalId")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });

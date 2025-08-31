@@ -60,7 +60,7 @@ namespace Banking.Api.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("bankAccounts");
+                    b.ToTable("BankAccounts");
                 });
 
             modelBuilder.Entity("Banking.Api.Domain.BankTransaction", b =>
